@@ -17,64 +17,24 @@ W2ONLINE ROUND4 前后端分离项目 简易小说网站
 
 │   ├── package.json
 
-│   ├── public
+│   ├── public //公共文件夹
 
-│   │   ├── favicon.ico
+│   ├── src //资源
 
-│   │   └── index.html
-
-│   ├── src
-
-│   │   ├── App.vue
+│   │   ├── App.vue //主页面
 
 │   │   ├── assets
 
-│   │   │   └── logo.png
+│   │   ├── components //公用组件库
 
-│   │   ├── components
+│   │   ├── main.js //入口
 
-│   │   │   ├── navBar.vue
+│   │   ├── plugins //插件
 
-│   │   │   └── novelProfile.vue
+│   │   ├── router //路由
 
-│   │   ├── main.js
+│   │   └── views //子页面
 
-│   │   ├── plugins
-
-│   │   │   └── axios.js
-
-│   │   ├── router
-
-│   │   │   └── index.js
-
-│   │   └── views
-
-│   │       ├── 404.vue
-
-│   │       ├── admin
-
-│   │       │   ├── login.vue
-
-│   │       │   └── review.vue
-
-│   │       ├── detail.vue
-
-│   │       ├── index.vue
-
-│   │       ├── search.vue
-
-│   │       └── user
-
-│   │           ├── favlist.vue
-
-│   │           ├── history.vue
-
-│   │           ├── login.vue
-
-│   │           ├── register.vue
-
-│   │           └── upload.vue
-
-│   └── vue.config.js
+│   └── vue.config.js //项目配置
 
 └── 寒假合作轮.pdf
