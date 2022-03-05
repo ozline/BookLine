@@ -3,17 +3,24 @@
     <h2>{{ headtitle }}
         <span class="badge bg-secondary" id="num" style="float:right;">Total:{{ num }}</span>
     </h2>
-    <div class="accordion" id="accordionAll" style="margin-top:30px;">
+    <div class="col-sm-10 input-group" style="margin-top:30px;">
+            <select class="form-select" id="novelCategory" @change="selectChange($event)">
+                <option
+                    v-for="(item,index) in items"
+                    v-bind:value="item.id"
+                    v-bind:key="index"
+                    >{{ item.name }}</option>
+            </select>
+        </div>
+    <div class="accordion" id="accordionAll" style="margin-top:20px">
         <profile
         v-for="novel in data"
-        v-bind:key="novel['item'].id"
-        v-bind:id="novel['item'].id"
-        v-bind:data="novel['item']"
-        v-bind:time="novel['favtime']"
-        v-bind:isfav=1
+        v-bind:key="novel.id"
+        v-bind:id="novel.id"
+        v-bind:data="novel"
         ></profile>
     </div>
-    <div class="progress" :style="progressShow">
+    <div class="progress" v-show="progressShow" style="margin-top:30px;">
         <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
     </div>
     <nav aria-label="pageNav" style="margin-top:30px">
@@ -35,48 +42,39 @@
 </template>
 
 <script>
-import novelProfile from '../../components/novel.vue'
+import novelProfile from '../components/novel.vue'
 
 export default {
-    name: 'UserFavlist',
+    name: 'novelCategory',
     data() {
         return {
-            headtitle: "",
+            headtitle: "按类别查找",
             num: 0,
             pages: 0,
             page: 1,
-            dataAll: [],
             data: [],
             CSSPrevious: "disabled",
-            CSSNext: "",
+            CSSNext: "disabled",
             CSSPage: "",
             CSSPageActive : [],
-            progressShow: ""
+            progressShow: false,
+            items: this.$store.state.category,
+            category: 0,
         }
     },
     components: {
         'profile': novelProfile
     },
     created() {
-        this.checkToken().then(res=>{
-            if(!res){
-                this.$router.push({
-                    path: '/user/login'
-                })
-            }else{
-                this.headtitle="'"+this.$store.state.username+"'的收藏"
-                this.loadData()
-                this.CSSPageActive = new Array(this.pages+1)
-                this.updatePage()
-            }
-        })
+        this.checkToken()
     },
     methods: {
         async getAxios(){
             var tmp = []
-            await this.axios.get('/cors/api/auth/novel/fav/',{
+            await this.axios.get('/cors/api/novel/category',{
                 params: {
-                    page : this.page
+                    page: this.page,
+                    category: this.category
                 },
                 headers:{
                     AuthToken: this.$store.state.userToken,
@@ -87,7 +85,7 @@ export default {
             return tmp
         },
         loadData(){
-            this.progressShow= ""
+            this.progressShow= true
             this.CSSPage="disabled"
             this.CSSPrevious="disabled"
             this.CSSNext="disabled"
@@ -104,10 +102,11 @@ export default {
                 this.num = dataReturn['data']['total']
                 this.updateToken(dataReturn)
                 this.pages = Math.ceil(this.num/10)
-                this.progressShow= "display:none;"
+                this.progressShow= false
                 this.CSSPage=""
                 this.CSSPrevious = this.page==1? "disabled" : ""
                 this.CSSNext = this.page>=this.pages? "disabled" : ""
+                this.headtitle = "按类别查找 - "+ this.$store.state.category[this.category].name
             })
         },
         changePage(n){
@@ -121,14 +120,18 @@ export default {
             this.updatePage()
         },
         updatePage(){
-            if(this.num==0) return
-            var endNum = this.page*10>this.num? this.num : this.page*10 //防止超标
-            this.data = this.dataAll.slice((this.page-1)*10,endNum)
             for(var index=1; index<this.pages+1;index++){
                     this.CSSPageActive[index] = ""
             }
             this.CSSPageActive[this.page] = "active "
-        }
+        },
+        selectChange(e){
+            this.category = e.target.value
+            this.loadData()
+            this.CSSPageActive = new Array(this.pages+1)
+            this.updatePage()
+            console.log("更改小说分类:"+this.category)
+        },
     }
 }
 </script>

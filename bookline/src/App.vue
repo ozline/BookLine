@@ -13,6 +13,6 @@ export default{
   name: 'indexPage',
   components: {
     'navbar': navBar
-  }
+  },
 }
 </script>

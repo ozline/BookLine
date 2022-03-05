@@ -6,13 +6,12 @@ import index from '../views/index.vue'
 import userLogin from '../views/user/login.vue'
 import userRegister from '../views/user/register.vue'
 import userFavlist from '../views/user/favlist.vue'
-import userHistory from '../views/user/history.vue'
 import userUpload from '../views/user/upload.vue'
-import adminLogin from '../views/admin/login.vue'
-import adminReview from '../views/admin/review.vue'
-import detail from '../views/detail.vue'
+import userHistory from '../views/user/history.vue'
 import search from '../views/search.vue'
 import notFound from '../views/404.vue'
+import review from '../views/admin/review.vue'
+import category from '../views/category.vue'
 
 Vue.use(VueRouter)
 
@@ -22,7 +21,8 @@ const routes = [
     name: 'index',
     component: index,
     meta: {
-      title: 'BookLine - 首页'
+      title: 'BookLine - 首页',
+      check: true,
     }
   },
   {
@@ -46,7 +46,7 @@ const routes = [
     name: 'userFavlist',
     component: userFavlist,
     meta: {
-      title: 'BookLine - 我的收藏'
+      title: 'BookLine - 我的收藏',
     }
   },
   {
@@ -54,7 +54,7 @@ const routes = [
     name: 'userHistory',
     component: userHistory,
     meta: {
-      title: 'BookLine - 浏览历史'
+      title: 'BookLine - 浏览历史',
     }
   },
   {
@@ -62,31 +62,15 @@ const routes = [
     name: 'userupload',
     component: userUpload,
     meta: {
-      title: 'BookLine - 文件上传'
-    }
-  },
-  {
-    path: '/admin/login',
-    name: 'adminLogin',
-    component: adminLogin,
-    meta: {
-      title: 'BookLine - 管理员登录'
+      title: 'BookLine - 文件上传',
     }
   },
   {
     path: '/admin/review',
     name: 'adminReview',
-    component: adminReview,
+    component: review,
     meta: {
-      title: 'BookLine - 小说审核'
-    }
-  },
-  {
-    path: '/detail/:novelID',
-    name: 'novelDetail',
-    component: detail,
-    meta: {
-      title: 'BookLine - 小说详情'
+      title: 'BookLine - 小说审查',
     }
   },
   {
@@ -94,7 +78,15 @@ const routes = [
     name: 'novelSearch',
     component: search,
     meta: {
-      title: 'BookLine - 搜索'
+      title: 'BookLine - 搜索',
+    }
+  },
+  {
+    path: '/category',
+    name: 'category',
+    component: category,
+    meta: {
+      title: 'BookLine - 按分类查找',
     }
   },
   {

@@ -1,73 +1,119 @@
 <template>
 <div style="margin:30px;">
-    <h2>小说数据库 <span class="badge bg-secondary" id="num" style="float:right;">Total:{{ num }}</span></h2>
-    <button type="button" class="btn btn-primary" @click="test()">临时API测试代码运行</button>
-    <div class="accordion" id="accordionAll" style="margin-top:30px;">
+    <h2>{{ headtitle }}
+        <span class="badge bg-secondary" id="num" style="float:right;">Total:{{ num }}</span>
+    </h2>
+    <div class="accordion" id="accordionAll" style="margin-top:30px">
         <profile
-        v-for="(novel,index) in data"
-        v-bind:key="novel.province_id"
-        v-bind:introduce="novel.province_id"
-        v-bind:title="novel.province"
-        v-bind:id="novel.province_id"
-        v-on:remove="remove(index)"
+        v-for="novel in data"
+        v-bind:key="novel.id"
+        v-bind:id="novel.id"
+        v-bind:data="novel"
         ></profile>
     </div>
+    <div class="progress" :style="progressShow">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="99" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+    </div>
     <nav aria-label="pageNav" style="margin-top:30px">
-        <!-- 此处分页功能将会由后端实现 -->
-        <ul class="pagination justify-content-end">
+        <ul class="pagination justify-content-center">
+            <li :class="'page-item '+CSSPrevious">
+                <a class="page-link" href="#" @click="movePage(-1)">Previous</a>
+            </li>
             <template
             v-for="n in pages"
             >
-            <li class="page-item" :key="n"><a class="page-link" @click="changePage(n)">{{ n }}</a></li>
+            <li :class="'page-item '+ CSSPageActive[n] + CSSPage" :key="n" aria-current="page"><a class="page-link" @click="changePage(n)" href="#">{{ n }}</a></li>
             </template>
+            <li :class="'page-item '+CSSNext">
+                <a class="page-link" href="#" @click="movePage(1)">Next</a>
+            </li>
         </ul>
     </nav>
 </div>
 </template>
 
 <script>
-// let key = "c33e230f80318034bce399982d3187eb"; // API所需的用户key
-let key = "004cce07c2dab96288d743150e76188d"
-
-
-//TODO:借用iOS那边给的API临时测试一下json解析效果
-
-import novelProfile from '../components/novelProfile.vue'
+import novelProfile from '../components/novel.vue'
 
 export default {
-    name: 'UserFavlist',
+    name: 'UserAllNovel',
     data() {
         return {
-        num: 0,
-        pages: 0,
-        data: [],
+            headtitle: "全部小说",
+            num: 0,
+            pages: 0,
+            page: 1,
+            data: [],
+            CSSPrevious: "disabled",
+            CSSNext: "disabled",
+            CSSPage: "",
+            CSSPageActive : [],
+            progressShow: ""
         }
     },
     components: {
         'profile': novelProfile
     },
+    created() {
+        this.checkToken()
+        this.loadData()
+        this.CSSPageActive = new Array(this.pages+1)
+        this.updatePage()
+    },
     methods: {
         async getAxios(){
-        let tmp = []
-        await this.axios.get('/api/springTravel/citys',{
-            params: {
-            key : key
-            }
-        }).then((response) =>{
-            tmp = response
+            var tmp = []
+            await this.axios.get('/cors/api/novel/all',{
+                params: {
+                    page : this.page
+                },
+                headers:{
+                    AuthToken: this.$store.state.userToken,
+                }
+            }).then((response) =>{
+                tmp = response
             })
-        return tmp
+            return tmp
         },
-        test(){
+        loadData(){
+            this.progressShow= ""
+            this.CSSPage="disabled"
+            this.CSSPrevious="disabled"
+            this.CSSNext="disabled"
             this.getAxios().then(res=>{
-                this.data = JSON.parse(JSON.stringify(res.data))['result']
-                console.log(this.data)
-                this.num = this.data.length
+                var dataReturn = JSON.parse(JSON.stringify(res.data))
+                if(dataReturn['success']==false){
+                    if(dataReturn['status']==999){
+                        return
+                    }
+                    alert("获取失败 ERR:"+dataReturn['error'])
+                    return
+                }
+                this.data = dataReturn['data']['items']
+                this.num = dataReturn['data']['total']
+                this.updateToken(dataReturn)
                 this.pages = Math.ceil(this.num/10)
+                this.progressShow= "display:none;"
+                this.CSSPage=""
+                this.CSSPrevious = this.page==1? "disabled" : ""
+                this.CSSNext = this.page>=this.pages? "disabled" : ""
             })
         },
         changePage(n){
-        console.log(this.pages)
+            this.page = n
+            this.loadData()
+            this.updatePage()
+        },
+        movePage(n){
+            this.page += n
+            this.loadData()
+            this.updatePage()
+        },
+        updatePage(){
+            for(var index=1; index<this.pages+1;index++){
+                    this.CSSPageActive[index] = ""
+            }
+            this.CSSPageActive[this.page] = "active "
         }
     }
 }

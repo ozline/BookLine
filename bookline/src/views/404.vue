@@ -8,7 +8,7 @@
 
 <script>
 export default {
-    name: '404Page',
+    name: 'cantFind',
     methods:{
         back(){
             if(window.history.length >1){
