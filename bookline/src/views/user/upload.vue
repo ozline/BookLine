@@ -63,7 +63,7 @@
                 {{ msg }}
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">我知道了</button>
+                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal" @click="gohome()">我知道了</button>
             </div>
             </div>
         </div>
@@ -88,6 +88,7 @@ export default {
             items: this.$store.state.category,
             msg: "NULL",
             msgTitle: "NULL",
+            toggleHome:false,
         }
     },
     beforeCreate(){
@@ -147,11 +148,16 @@ export default {
                     this.showMsg("出错了!","上传文件失败  ERR:"+dataReturn['error'])
                 }else{
                     this.showMsg("提交成功","上传文件成功，请等待管理员审核，审核通过后将会上架小说")
-                    this.$router.push({
-                        path: '/'
-                    })
+                    this.toggle = true
                 }
             })
+        },
+        gohome(){
+            if(this.toggle){
+                this.$router.push({
+                        path: '/'
+                    })
+            }
         }
     }
 }
