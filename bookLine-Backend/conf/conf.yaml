@@ -1,0 +1,21 @@
+httpPort: 6666
+mysql:
+  username: ozline_a
+  password: Mima011216
+  ip: db.ozline.icu
+  port: 3306
+  dbname: ozline_test
+  table:
+    users: users
+    favlist: favlist
+    data: novel
+oss:
+  endpoint: files.ozline.icu #默认启用自定义域名 TODO:部署在服务器上时注意改成内网地址！！
+  accessKeyID: LTAI5tJEhsgVnUv3CrfqVKDo
+  accessKeySecret: lHRuLi7oOATU7QytZQKyQhheupkAbh
+  bucket: ozliinex
+  maindir: bilibili
+admin:
+  username: admin
+  secret: MTAxNTkwMTg1Mw== #BASE64，jwtToken
+  name: ozline #签名颁发者
